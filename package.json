@@ -1,0 +1,19 @@
+{
+  "name": "taylorfit",
+  "version": "1.0.0",
+  "description": "A node.js app that helps fashion designers meet their needs",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corneliuze/taylorFit-backend.git"
+  },
+  "author": "Falaye Iyanu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/corneliuze/taylorFit-backend/issues"
+  },
+  "homepage": "https://github.com/corneliuze/taylorFit-backend#readme"
+}
