@@ -1,27 +1,29 @@
 const mongoose = require("../database/mongoose");
 const { Schema } = mongoose
 
-const gigSchema = new Schema({
-    title: {
+const userSchema = new Schema({
+    name: {
         type: String,
         required: true,
     },
-    measurement: {
+    business_name: {
         type: String,
         unique: true,
         required: true
     },
-    delivery_date: {
+    phone_number: {
         type: Number,
         required: true,
     },
-    style: [{
+    password: {
         type: String,
-    }],
-    notes : {
-        type: String,
+        required: true
+    },
+    token: {
+        type: String
     }
 })
 
-const gigModel = mongoose.model('gigModel', gigSchema)
-module.exports = gigModel
+
+const UserModel = mongoose.model('userModel', userSchema)
+module.exports = UserModel
