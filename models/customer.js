@@ -6,11 +6,6 @@ const customerSchema = new Schema({
         type: String,
         required: true,
     },
-    business_name: {
-        type: String,
-        unique: true,
-        required: true
-    },
     phone_number: {
         type: Number,
         required: true,
