@@ -6,6 +6,9 @@ const gigSchema = new Schema({
         type: String,
         required: true,
     },
+    customer :{
+        required : true
+    },
     measurement: {
         type: String,
         unique: true,
