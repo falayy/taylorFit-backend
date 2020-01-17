@@ -24,6 +24,20 @@ const userSchema = new Schema({
     }
 })
 
+function findByToken(token) {
+    let decoded;
+    try {
+        decoded = jwt.verify(token, 'abc123')
+    } catch (e) {
+        return Promise.reject();
+    }
+    var response = UserModel.findOne({
+        '_id': decoded._id,
+        token
+    });
+    return response;
+}
+
 
 const UserModel = mongoose.model('userModel', userSchema)
-module.exports = UserModel
+module.exports = {UserModel , findByToken}

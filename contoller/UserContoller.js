@@ -145,8 +145,7 @@ class Usercontroller {
         Gig.create({
             title: req.body.title,
             customer: id,
-            delivery_date: dateStamp,
-            style: req.body.style,
+            delivery_date: date,
             notes: req.body.notes
         }).then((data) => {
 
@@ -155,6 +154,9 @@ class Usercontroller {
         })
     }
 
+    /**
+     * @function_to_update
+     */
     updateGig(req, res) {
         const id = req.body.id;
         const body = _.pick(req.body, ['delivery_date', 'notes']);
@@ -180,6 +182,24 @@ class Usercontroller {
 
     updateFemaleMeasurement(req, res) {
 
+    }
+
+    getCustomers(req, res){
+      Customer.find({})
+      .then((data) =>{
+
+      }).catch((e) =>{
+
+      })
+    }
+
+    getGigs(req, res){
+        Gig.find({customer : _id})
+        .then((data) =>{
+
+        }).catch((e) =>{
+
+        })
     }
 
 
