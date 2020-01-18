@@ -40,4 +40,4 @@ function findByToken(token) {
 
 
 const UserModel = mongoose.model('userModel', userSchema)
-module.exports = {UserModel , findByToken}
+module.exports = {UserModel , findByToken} 

@@ -8,7 +8,7 @@ const femaleMeasurementSchema = new Schema({
     bust_line: {
         type : Number
     },
-    sbust_round : {
+    bust_round : {
         type : Number
     },
     under_bust : {
