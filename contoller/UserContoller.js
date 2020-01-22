@@ -1,9 +1,11 @@
-const User = require('../models/User');
+const {UserModel, generateToken, findByToken} = require('../models/User');
 const Customer = require('../models/customer');
+const { ObjectID } = require('mongodb');
+const _ = require('lodash');
 const Gig = require('../models/gig')
 const bcrypt = require('bcrypt');
 const moment = require('moment');
-const jwt = require('jsonwebtoken');
+
 
 
 class Usercontroller {
@@ -22,7 +24,7 @@ class Usercontroller {
                 message: 'pass the required fields, boss, thanks.'
             });
         }
-        User.find({ phone_number })
+        UserModel.findOne({ phone_number : req.body.phone_number })
             .then((data) => {
                 if (data) {
                     res.status(409).json({
@@ -33,14 +35,14 @@ class Usercontroller {
                 } else {
                     const salt = bcrypt.genSaltSync(10);
                     const hashed = bcrypt.hashSync(req.body.password, salt);
-                    User.create({
+                    UserModel.create({
                         name: req.body.name,
                         phone_number: req.body.phone_number,
                         password: hashed,
                         business_name: req.body.business_name
                     }).then(async (user) => {
                         const token = generateToken(user._id);
-                        const user_object = await User.findOne({ _id: user_res._id });
+                        const user_object = await UserModel.findOne({ _id: user._id });
                         user_object.token = token;
                         user_object.save().then((data) => {
                             res.status(200).json({
@@ -67,7 +69,7 @@ class Usercontroller {
     }
 
     signIn(req, res) {
-        User.findOne({ phone_number: req.body.phone_number })
+        UserModel.findOne({ phone_number: req.body.phone_number })
             .then((user) => {
                 if (!user) {
                     res.status(409).json({
@@ -116,7 +118,6 @@ class Usercontroller {
     /**
      * user's can their @create_customer
      */
-
     createCustomer(req, res) {
         Customer.create({
             name: req.body.name,
@@ -139,14 +140,47 @@ class Usercontroller {
      * @function_to_create_gig
      */
 
-    createGig(req, res) {
-        var dateStamp = req.body.delivery_date;
-        var date = dateStamp;
+    async createGig (req, res) {
+        const dateStamp = req.body.delivery_date;
+        const date = dateStamp;
+        const customer_id = id;
+        const customer_object = await Customer.findOne({_id : customer_id});
+        if(customer_object.gender =="male"){
+           var male_measurement = {
+            neck_circumference: req.body.neck_circumference,
+            shoulder_breadth: req.body.shoulder_breadth,
+            chest_circumference: req.body.chest_circumference,
+            waist_circumference: req.body.waist_circumference,
+            hips_circumference: req.body.hips_circumference,
+            thigh: req.body.thigh,
+            calf: req.body.calf,
+            wrist_circumference: req.body.wrist_circumference,
+            arm_length: req.body.arm_length,
+            full_length: req.body.full_length
+        }
+        }else{
+        var female_measurement = {
+            shoulder_shoulder: req.body.shoulder_shoulder,
+            bust_line: req.body.bust_line,
+            bust_round: req.body.bust_round,
+            under_bust: req.body.under_bust,
+            natural_waist_line: req.body.natural_waist_line,
+            natural_waist_round: req.body.natural_waist_round,
+            hip_line: req.body.hip_line,
+            hip_round: req.body.hip_round,
+            full_length: req.body.full_length,
+            arm_hole: req.body.arm_hole,
+            arm_round: req.body.arm_round,
+            sleeve_length: req.body.sleeve_length,
+            half_sleeve: req.body.half_sleeve
+        }}
         Gig.create({
             title: req.body.title,
             customer: id,
-            delivery_date: dateStamp,
-            style: req.body.style,
+            male_measurement,
+            female_measurement,
+            delivery_date: date,
+            style : req.body.style,
             notes: req.body.notes
         }).then((data) => {
 
@@ -155,10 +189,152 @@ class Usercontroller {
         })
     }
 
+    /**
+     * @function_to_update
+     */
     updateGig(req, res) {
         const id = req.body.id;
+        const style = req.body.style;
         const body = _.pick(req.body, ['delivery_date', 'notes']);
         Gig.findByIdAndUpdate(id, { $set: body }, { new: true })
+            .then((data) => {
+            data.style.push(style)//for each
+            data.save().then((data) =>{
+
+            }).catch((e) =>{
+
+            })
+            }).catch((e) => {
+
+            })
+    }
+    /**
+     * @measurement_functions
+     */
+
+    // createMaleMeasurement(req, res) {
+    //     MaleModel.create({
+    //         neck_circumference: req.body.neck_circumference,
+    //         shoulder_breadth: req.body.shoulder_breadth,
+    //         chest_circumference: req.body.chest_circumference,
+    //         waist_circumference: req.body.waist_circumference,
+    //         hips_circumference: req.body.hips_circumference,
+    //         thigh: req.body.thigh,
+    //         calf: req.body.calf,
+    //         wrist_circumference: req.body.wrist_circumference,
+    //         arm_length: req.body.arm_length,
+    //         full_length: req.body.full_length
+    //     }).then((data) => {
+    //         res.status(200).json({
+    //             error: false,
+    //             code: 201,
+    //             message: 'male measurement created successfully',
+    //             male_measurement: {
+    //                 neck_circumference: data.neck_circumference,
+    //                 shoulder_breadth: data.shoulder_breadth,
+    //                 chest_circumference: data.chest_circumference,
+    //                 waist_circumference: data.waist_circumference,
+    //                 hips_circumference: data.hips_circumference,
+    //                 thigh: data.thigh,
+    //                 calf: data.calf,
+    //                 wrist_circumference: data.wrist_circumference,
+    //                 arm_length: data.arm_length,
+    //                 full_length: data.full_length
+    //             }
+    //         })
+    //     }).catch((e) => {
+
+    //     })
+    // }
+
+    // updateMaleMeasurement(req, res) {
+    //     const id = req.body.id;
+    //     const body = _.pick(req.body, ['neck_circumference', 'shoulder_breadth',
+    //         'chest_circumference', 'waist_circumference', 'hips_circumference',
+    //         'thigh', 'calf', 'wrist_circumference', 'arm_length', 'full_length']);
+    //     MaleModel.findByIdAndUpdate(id, { $set: body }, { new: true })
+    //         .then((data) => {
+
+    //         }).catch((e) => {
+
+    //         })
+    // }
+
+    // createFemaleMeasurement(req, res) {
+    //     FemaleModel.create({
+    //         shoulder_shoulder: req.body.shoulder_shoulder,
+    //         bust_line: req.body.bust_line,
+    //         bust_round: req.body.bust_round,
+    //         under_bust: req.body.under_bust,
+    //         natural_waist_line: req.body.natural_waist_line,
+    //         natural_waist_round: req.body.natural_waist_round,
+    //         hip_line: req.body.hip_line,
+    //         hip_round: req.body.hip_round,
+    //         full_length: req.body.full_length,
+    //         arm_hole: req.body.arm_hole,
+    //         arm_round: req.body.arm_round,
+    //         sleeve_length: req.body.sleeve_length,
+    //         half_sleeve: req.body.half_sleeve
+    //     }).then((data) => {
+    //         res.status(200).json({
+    //             error: false,
+    //             code: 201,
+    //             message: 'female measurement created successfully',
+    //             female_measurement: {
+    //                 shoulder_shoulder: data.shoulder_shoulder,
+    //                 bust_line: data.bust_line,
+    //                 bust_round: data.bust_round,
+    //                 under_bust: data.under_bust,
+    //                 natural_waist_line: data.natural_waist_line,
+    //                 natural_waist_round: data.natural_waist_round,
+    //                 hip_line: data.hip_line,
+    //                 hip_round: data.hip_round,
+    //                 full_length: data.full_length,
+    //                 arm_hole: data.arm_hole,
+    //                 arm_round: data.arm_round,
+    //                 sleeve_length: data.sleeve_length,
+    //                 half_sleeve: data.half_sleeve
+    //             }
+    //         })
+    //     }).catch((e) => {
+
+    //     })
+    // }
+
+    // updateFemaleMeasurement(req, res) {
+    //     const id = req.body.id;
+    //     const body = _.pick(req.body, ['shoulder_shoulder', 'bust_line', 'bust_round',
+    //         'under_bust', 'natural_waist_line', 'natural_waist_round', 'hip_line', 'hip_round',
+    //         'full_length', 'arm_hole', 'arm_round', 'sleeve_length', 'half_sleeve']);
+    //     FemaleModel.findByIdAndUpdate(id, { $set: body }, { new: true })
+    //         .then((data) => {
+
+    //         }).catch((e) => {
+
+    //         })
+    // }
+
+    /**
+     * @get_customers
+     */
+
+    getCustomers(req, res) {
+        Customer.find({})
+            .then((data) => {
+                res.status(200).json({
+                    error: false,
+                    code: 201,
+                    message: 'here are the customers',
+                    customers : miniData
+                })
+            }).catch((e) => {
+            })
+    }
+/**
+ * @measurement_comes_with_gigs_for_a_particular_customer
+ */
+    getGigs(req, res) {
+        Gig.find({ customer: _id })
             .then((data) => {
 
             }).catch((e) => {
@@ -166,22 +342,8 @@ class Usercontroller {
             })
     }
 
-    createMaleMeasurement(req, res) {
-
-    }
-
-    createFemaleMeasurement(req, res) {
-
-    }
-
-    updateMaleMeasurement(req, res) {
-
-    }
-
-    updateFemaleMeasurement(req, res) {
-
-    }
-
 
 
 }
+
+module.exports = new Usercontroller();
