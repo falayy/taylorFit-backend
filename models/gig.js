@@ -1,4 +1,6 @@
 const mongoose = require("../database/mongoose");
+const MaleMeasurement = require("../models/maleMeasure");
+const FemaleMeasurement = require("../models/femaleMeasure");
 const { Schema } = mongoose
 
 const gigSchema = new Schema({
@@ -9,10 +11,13 @@ const gigSchema = new Schema({
     customer :{
         required : true
     },
-    measurement: {
-        type: String,
-        unique: true,
-        required: true
+    male_measurement: {
+        MaleMeasurement,
+        default : null
+    },
+    female_measurement :{
+        default : null,
+        FemaleMeasurement
     },
     delivery_date: {
         type: Number,
@@ -27,4 +32,4 @@ const gigSchema = new Schema({
 })
 
 const gigModel = mongoose.model('gigModel', gigSchema)
-module.exports = gigModel
+module.exports = gigModel;
