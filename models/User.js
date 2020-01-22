@@ -1,4 +1,5 @@
 const mongoose = require("../database/mongoose");
+const jwt = require('jsonwebtoken');
 const { Schema } = mongoose
 
 const userSchema = new Schema({
@@ -38,6 +39,11 @@ function findByToken(token) {
     return response;
 }
 
+function generateToken(id) {
+    var token = jwt.sign({ _id: id.toHexString() }, 'abc123').toString();
+    return token;
+}
 
-const UserModel = mongoose.model('userModel', userSchema)
-module.exports = {UserModel , findByToken} 
+
+const UserModel = mongoose.model('UserModel', userSchema)
+module.exports = {UserModel , findByToken, generateToken} 
