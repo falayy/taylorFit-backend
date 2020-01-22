@@ -1,11 +1,14 @@
 const User = require('../models/User');
 const Customer = require('../models/customer');
+const { ObjectID } = require('mongodb');
+const _ = require('lodash');
 const Gig = require('../models/gig')
 const MaleModel = require('../models/maleMeasure');
 const FemaleModel = require('../models/femaleMeasure');
 const bcrypt = require('bcrypt');
 const moment = require('moment');
 const jwt = require('jsonwebtoken');
+
 
 
 class Usercontroller {
