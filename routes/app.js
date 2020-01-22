@@ -3,6 +3,8 @@ const auth = require('../middleware/auth');
 const express = require('express');
 const PORT = process.env.PORT || 3100;
 const app = express();
+const bodyParser = require('body-parser');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
