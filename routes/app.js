@@ -56,9 +56,6 @@ app.post('/measurement/female/update', auth ,(req, res) =>{
     UserController.updateFemaleMeasurement(req, res);
 });
 
-
-
-
 app.listen(PORT, () =>{
     console.log("server running on", PORT);   
 })

@@ -78,27 +78,25 @@ const femaleMeasurementSchema = new Schema({
 });
 
 const gigSchema = new Schema({
+    user_id : {
+
+    },
+    customer_id : {
+
+    },
     title: {
         type: String,
         required: true,
     },
-    customer :{
-        type : Number,
-        required : true
-    },
     male_measurement: {
-        measuement : maleMeasurementSchema
     },
     female_measurement :{
-        measurement : femaleMeasurementSchema
     },
     delivery_date: {
         type: Number,
         required: true,
     },
-    style: [{
-        type: String,
-    }],
+    style: [String],
     notes : {
         type: String,
     }
