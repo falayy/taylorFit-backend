@@ -40,6 +40,21 @@ app.get('/gigs', auth, (req, res) =>{
     UserController.getGigs(req, res);
 });
 
+app.post('/customer/measurement/male', auth ,(req, res) =>{
+    UserController.createMaleMeasurement(req, res);
+});
+
+app.post('/customer/measurement/female', auth ,(req, res) =>{
+    UserController.createFemaleMeasurement(req, res);
+});
+
+app.post('/measurement/male/update', auth ,(req, res) =>{
+    UserController.updateMaleMeasurement(req, res);
+});
+
+app.post('/measurement/female/update', auth ,(req, res) =>{
+    UserController.updateFemaleMeasurement(req, res);
+});
 
 app.listen(PORT, () =>{
     console.log("server running on", PORT);   

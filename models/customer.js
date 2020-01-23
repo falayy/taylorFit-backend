@@ -16,8 +16,12 @@ const customerSchema = new Schema({
     },
     gigs : [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'gigModel',
-    }]
+        ref: 'gigModel'
+    }],
+    user_id : {
+        ref : 'UserModel',
+        type: mongoose.Schema.Types.ObjectId,
+    }
 })
 
 const Customer = mongoose.model('Customer', customerSchema)
