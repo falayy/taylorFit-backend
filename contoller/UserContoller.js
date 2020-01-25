@@ -216,48 +216,58 @@ class Usercontroller {
      * @measurement_functions
      */
 
-    createMaleMeasurement(req, res) {
-        MaleModel.create({
-            user_id : req.body.user_id,
-            customer_id : req.body.customer_id,
-            gig_id : req.body.gig_id,
-            neck_circumference: req.body.neck_circumference,
-            shoulder_breadth: req.body.shoulder_breadth,
-            chest_circumference: req.body.chest_circumference,
-            waist_circumference: req.body.waist_circumference,
-            hips_circumference: req.body.hips_circumference,
-            thigh: req.body.thigh,
-            calf: req.body.calf,
-            wrist_circumference: req.body.wrist_circumference,
-            arm_length: req.body.arm_length,
-            full_length: req.body.full_length
-        }).then((data) => {
-            res.status(200).json({
-                error: false,
-                code: 201,
-                message: 'male measurement created successfully',
-                male_measurement: {
-                    id : data._id,
-                    neck_circumference: data.neck_circumference,
-                    shoulder_breadth: data.shoulder_breadth,
-                    chest_circumference: data.chest_circumference,
-                    waist_circumference: data.waist_circumference,
-                    hips_circumference: data.hips_circumference,
-                    thigh: data.thigh,
-                    calf: data.calf,
-                    wrist_circumference: data.wrist_circumference,
-                    arm_length: data.arm_length,
-                    full_length: data.full_length
-                }
+    async createMaleMeasurement(req, res) {
+        const customer_id = req.body.customer_id;
+        const customer_object = await Customer.findOne({ _id: customer_id });
+        if (customer_object.gender == "male") {
+            MaleModel.create({
+                user_id: req.body.user_id,
+                customer_id,
+                gig_id: req.body.gig_id,
+                neck_circumference: req.body.neck_circumference,
+                shoulder_breadth: req.body.shoulder_breadth,
+                chest_circumference: req.body.chest_circumference,
+                waist_circumference: req.body.waist_circumference,
+                hips_circumference: req.body.hips_circumference,
+                thigh: req.body.thigh,
+                calf: req.body.calf,
+                wrist_circumference: req.body.wrist_circumference,
+                arm_length: req.body.arm_length,
+                full_length: req.body.full_length
+            }).then((data) => {
+                res.status(200).json({
+                    error: false,
+                    code: 201,
+                    message: 'male measurement created successfully',
+                    male_measurement: {
+                        id: data._id,
+                        neck_circumference: data.neck_circumference,
+                        shoulder_breadth: data.shoulder_breadth,
+                        chest_circumference: data.chest_circumference,
+                        waist_circumference: data.waist_circumference,
+                        hips_circumference: data.hips_circumference,
+                        thigh: data.thigh,
+                        calf: data.calf,
+                        wrist_circumference: data.wrist_circumference,
+                        arm_length: data.arm_length,
+                        full_length: data.full_length
+                    }
+                })
+            }).catch((e) => {
+                res.status(400).json({
+                    error: true,
+                    code: 201,
+                    message: 'unable to create measurement',
+                    data: e
+                })
             })
-        }).catch((e) => {
-            res.status(202).json({
+        } else {
+            res.status(400).json({
                 error: true,
                 code: 201,
-                message: 'unable to create measurement',
-                data: e
+                message: 'you might need to confirm your gender',
             })
-        })
+        }
     }
 
     updateMaleMeasurement(req, res) {
@@ -294,54 +304,65 @@ class Usercontroller {
             })
     }
 
-    createFemaleMeasurement(req, res) {
-        FemaleModel.create({
-            user_id : req.body.user_id,
-            customer_id : req.body.customer_id,
-            gig_id : req.body.gig_id,
-            shoulder_shoulder: req.body.shoulder_shoulder,
-            bust_line: req.body.bust_line,
-            bust_round: req.body.bust_round,
-            under_bust: req.body.under_bust,
-            natural_waist_line: req.body.natural_waist_line,
-            natural_waist_round: req.body.natural_waist_round,
-            hip_line: req.body.hip_line,
-            hip_round: req.body.hip_round,
-            full_length: req.body.full_length,
-            arm_hole: req.body.arm_hole,
-            arm_round: req.body.arm_round,
-            sleeve_length: req.body.sleeve_length,
-            half_sleeve: req.body.half_sleeve
-        }).then((data) => {
-            res.status(200).json({
-                error: false,
-                code: 201,
-                message: 'female measurement created successfully',
-                female_measurement: {
-                    shoulder_shoulder: data.shoulder_shoulder,
-                    bust_line: data.bust_line,
-                    bust_round: data.bust_round,
-                    under_bust: data.under_bust,
-                    natural_waist_line: data.natural_waist_line,
-                    natural_waist_round: data.natural_waist_round,
-                    hip_line: data.hip_line,
-                    hip_round: data.hip_round,
-                    full_length: data.full_length,
-                    arm_hole: data.arm_hole,
-                    arm_round: data.arm_round,
-                    sleeve_length: data.sleeve_length,
-                    half_sleeve: data.half_sleeve
-                }
-            })
-        }).catch((e) => {
-            res.status(200).json({
-                error: true,
-                code: 401,
-                message: 'unable to update measurement',
-                data: e
-            })
+   async createFemaleMeasurement(req, res) {
+        const customer_id = req.body.customer_id;
+        const customer_object = await Customer.findOne({ _id: customer_id });
+        if (customer_object.gender == "female") {
+            FemaleModel.create({
+                user_id: req.body.user_id,
+                customer_id: req.body.customer_id,
+                gig_id: req.body.gig_id,
+                shoulder_shoulder: req.body.shoulder_shoulder,
+                bust_line: req.body.bust_line,
+                bust_round: req.body.bust_round,
+                under_bust: req.body.under_bust,
+                natural_waist_line: req.body.natural_waist_line,
+                natural_waist_round: req.body.natural_waist_round,
+                hip_line: req.body.hip_line,
+                hip_round: req.body.hip_round,
+                full_length: req.body.full_length,
+                arm_hole: req.body.arm_hole,
+                arm_round: req.body.arm_round,
+                sleeve_length: req.body.sleeve_length,
+                half_sleeve: req.body.half_sleeve
+            }).then((data) => {
+                res.status(200).json({
+                    error: false,
+                    code: 201,
+                    message: 'female measurement created successfully',
+                    female_measurement: {
+                        id:data._id,
+                        shoulder_shoulder: data.shoulder_shoulder,
+                        bust_line: data.bust_line,
+                        bust_round: data.bust_round,
+                        under_bust: data.under_bust,
+                        natural_waist_line: data.natural_waist_line,
+                        natural_waist_round: data.natural_waist_round,
+                        hip_line: data.hip_line,
+                        hip_round: data.hip_round,
+                        full_length: data.full_length,
+                        arm_hole: data.arm_hole,
+                        arm_round: data.arm_round,
+                        sleeve_length: data.sleeve_length,
+                        half_sleeve: data.half_sleeve
+                    }
+                })
+            }).catch((e) => {
+                res.status(200).json({
+                    error: true,
+                    code: 401,
+                    message: 'unable to update measurement',
+                    data: e
+                })
 
-        })
+            })
+        } else {
+            res.status(400).json({
+                error: true,
+                code: 201,
+                message: 'you might need to confirm your gender',
+            })
+        }
     }
 
     updateFemaleMeasurement(req, res) {
@@ -402,7 +423,6 @@ class Usercontroller {
                     error: true,
                     code: 401,
                     message: 'unable to get customers',
-                    data: e
                 })
             })
     }
