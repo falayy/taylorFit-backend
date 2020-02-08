@@ -6,11 +6,6 @@ const customerSchema = new Schema({
         type: String,
         required: true,
     },
-    business_name: {
-        type: String,
-        unique: true,
-        required: true
-    },
     phone_number: {
         type: Number,
         required: true,
@@ -21,9 +16,13 @@ const customerSchema = new Schema({
     },
     gigs : [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'gigModel',
-    }]
+        ref: 'gigModel'
+    }],
+    user_id : {
+        ref : 'UserModel',
+        type: mongoose.Schema.Types.ObjectId,
+    }
 })
 
-const customerModel = mongoose.model('customerModel', customerSchema)
-module.exports = customerModel
+const Customer = mongoose.model('Customer', customerSchema)
+module.exports = Customer;
