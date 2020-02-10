@@ -4,6 +4,7 @@
   "description": "A node.js app that helps fashion designers meet their needs",
   "main": "app.js",
   "scripts": {
+    "start": "node routes/app.js/",
     "test": "npm start"
   },
   "repository": {
