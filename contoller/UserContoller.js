@@ -440,9 +440,8 @@ class Usercontroller {
     /**
      * @add_to_done
      */
-    addToDone(req, res) {
+    async addToDone(req, res) {
         const id = req.body.gig_id;
-        const style = req.body.style;
         const gig_object = await Gig.findOne({ customer_id: req.body.customer_id, _id: id });
         gig_object.is_done = true;
         gig_object.save().then((data) => {
