@@ -430,12 +430,38 @@ class Usercontroller {
      * @measurement_comes_with_gigs_for_a_particular_customer
      */
     getGigs(req, res) {
-        Gig.find({ customer: _id })
+        Gig.find({ customer: _id})
             .then((data) => {
 
             }).catch((e) => {
 
             })
+    }
+    /**
+     * @add_to_done
+     */
+    async addToDone(req, res) {
+        const id = req.body.gig_id;
+        const gig_object = await Gig.findOne({ customer_id: req.body.customer_id, _id: id });
+        gig_object.is_done = true;
+        gig_object.save().then((data) => {
+            res.status(200).json({
+                error: false,
+                code: 201,
+                message: 'gig marked as done',
+                gig: {
+                    id: data._id,
+                    title: data.title
+                }
+            })
+        }).catch((e) => {
+            res.status(401).json({
+                error: true,
+                code: 401,
+                message: 'cannot be marked as done',
+                data: e
+            });
+        });
     }
 
 
