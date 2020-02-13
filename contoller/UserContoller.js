@@ -31,7 +31,6 @@ class Usercontroller {
                 if (data) {
                     res.status(400).json({
                         error: true,
-                        code: 400,
                         message: 'phone number exists'
                     })
                 } else {
@@ -58,9 +57,8 @@ class Usercontroller {
                                 }
                             })
                         }).catch((e) => {
-                            res.status(200).json({
+                            res.status(401).json({
                                 error: true,
-                                code: 401,
                                 message: 'unable to register user',
                                 data: e
                             })
@@ -74,9 +72,8 @@ class Usercontroller {
         UserModel.findOne({ phone_number: req.body.phone_number })
             .then((user) => {
                 if (!user) {
-                    res.status(409).json({
+                    res.status(401).json({
                         error: true,
-                        code: 409,
                         message: 'phone number does not exist'
                     })
                 } else {
@@ -87,7 +84,6 @@ class Usercontroller {
                         user.save().then((data) => {
                             res.status(200).json({
                                 error: false,
-                                code: 201,
                                 message: 'user signed in',
                                 user: {
                                     id: data._id,
@@ -98,14 +94,12 @@ class Usercontroller {
                         }).catch((e) => {
                             res.status(400).json({
                                 error: false,
-                                code: 201,
                                 message: 'unable to sign user in',
                             })
                         })
                     } else {
                         res.status(400).json({
                             error: false,
-                            code: 400,
                             message: 'incorrect password'
                         })
                     }
@@ -129,7 +123,6 @@ class Usercontroller {
         }).then((data) => {
             res.status(200).json({
                 error: false,
-                code: 201,
                 message: 'customer created successfully',
                 customer: {
                     id: data._id,
@@ -140,7 +133,6 @@ class Usercontroller {
         }).catch((e) => {
             res.status(400).json({
                 error: false,
-                code: 400,
                 message: 'unable to create customer'
             })
         })
@@ -162,7 +154,6 @@ class Usercontroller {
         }).then((data) => {
             res.status(200).json({
                 error: false,
-                code: 201,
                 message: 'gig created successfully',
                 gig: {
                     id: data._id,
@@ -172,7 +163,6 @@ class Usercontroller {
         }).catch((e) => {
             res.status(401).json({
                 error: true,
-                code: 401,
                 message: 'unable to create gig',
                 data: e
             })
@@ -195,7 +185,6 @@ class Usercontroller {
         gig_object.save().then((data) => {
             res.status(200).json({
                 error: false,
-                code: 201,
                 message: 'gig updated successfully',
                 gig: {
                     id: data._id,
@@ -205,7 +194,6 @@ class Usercontroller {
         }).catch((e) => {
             res.status(401).json({
                 error: true,
-                code: 401,
                 message: 'unable to update gig',
                 data: e
             });
@@ -237,7 +225,6 @@ class Usercontroller {
             }).then((data) => {
                 res.status(200).json({
                     error: false,
-                    code: 201,
                     message: 'male measurement created successfully',
                     male_measurement: {
                         id: data._id,
@@ -254,17 +241,15 @@ class Usercontroller {
                     }
                 })
             }).catch((e) => {
-                res.status(400).json({
+                res.status(401).json({
                     error: true,
-                    code: 201,
                     message: 'unable to create measurement',
                     data: e
                 })
             })
         } else {
-            res.status(400).json({
+            res.status(401).json({
                 error: true,
-                code: 201,
                 message: 'you might need to confirm your gender',
             })
         }
@@ -279,7 +264,6 @@ class Usercontroller {
             .then((data) => {
                 res.status(200).json({
                     error: false,
-                    code: 201,
                     message: 'male measurement updated successfully',
                     male_measurement: {
                         neck_circumference: data.neck_circumference,
@@ -295,9 +279,8 @@ class Usercontroller {
                     }
                 })
             }).catch((e) => {
-                res.status(400).json({
+                res.status(401).json({
                     error: true,
-                    code: 401,
                     message: 'unable to update measurement',
                     data: e
                 })
@@ -328,7 +311,6 @@ class Usercontroller {
             }).then((data) => {
                 res.status(200).json({
                     error: false,
-                    code: 201,
                     message: 'female measurement created successfully',
                     female_measurement: {
                         id:data._id,
@@ -348,18 +330,16 @@ class Usercontroller {
                     }
                 })
             }).catch((e) => {
-                res.status(200).json({
+                res.status(401).json({
                     error: true,
-                    code: 401,
                     message: 'unable to update measurement',
                     data: e
                 })
 
             })
         } else {
-            res.status(400).json({
+            res.status(401).json({
                 error: true,
-                code: 201,
                 message: 'you might need to confirm your gender',
             })
         }
@@ -375,7 +355,6 @@ class Usercontroller {
 
                 res.status(200).json({
                     error: false,
-                    code: 201,
                     message: 'female measurement update successfully',
                     female_measurement: {
                         shoulder_shoulder: data.shoulder_shoulder,
@@ -397,7 +376,6 @@ class Usercontroller {
             }).catch((e) => {
                 res.status(200).json({
                     error: true,
-                    code: 401,
                     message: 'unable to update measurement',
                     data: e
                 })
@@ -414,14 +392,12 @@ class Usercontroller {
             .then((data) => {
                 res.status(200).json({
                     error: false,
-                    code: 201,
                     message: 'here are the customers ',
                     customers: data
                 })
             }).catch((e) => {
                 res.status(200).json({
                     error: true,
-                    code: 401,
                     message: 'unable to get customers',
                 })
             })
@@ -457,7 +433,6 @@ class Usercontroller {
         }).catch((e) => {
             res.status(401).json({
                 error: true,
-                code: 401,
                 message: 'cannot be marked as done',
                 data: e
             });
