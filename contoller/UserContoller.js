@@ -48,9 +48,8 @@ class Usercontroller {
                         user_object.save().then((data) => {
                             res.status(200).json({
                                 error: false,
-                                code: 201,
                                 message: 'user registered',
-                                user: {
+                                data : {
                                     id: data._id,
                                     token: data.token,
                                     name: data.name
@@ -85,7 +84,7 @@ class Usercontroller {
                             res.status(200).json({
                                 error: false,
                                 message: 'user signed in',
-                                user: {
+                                data : {
                                     id: data._id,
                                     token: data.token,
                                     name: data.name
@@ -124,7 +123,7 @@ class Usercontroller {
             res.status(200).json({
                 error: false,
                 message: 'customer created successfully',
-                customer: {
+                data : {
                     id: data._id,
                     phone_number: data.phone_number,
                     name: data.name
@@ -142,7 +141,7 @@ class Usercontroller {
      */
 
     createGig(req, res) {
-        const dateStamp = new Date().getTime();             //req.body.delivery_date;
+        const dateStamp = new Date().getTime();             
         const date = dateStamp;
         Gig.create({
             user_id: req.body.user_id,
@@ -155,7 +154,7 @@ class Usercontroller {
             res.status(200).json({
                 error: false,
                 message: 'gig created successfully',
-                gig: {
+                data : {
                     id: data._id,
                     title: data.title
                 }
@@ -186,7 +185,7 @@ class Usercontroller {
             res.status(200).json({
                 error: false,
                 message: 'gig updated successfully',
-                gig: {
+                data : {
                     id: data._id,
                     title: data.title
                 }
@@ -195,7 +194,7 @@ class Usercontroller {
             res.status(401).json({
                 error: true,
                 message: 'unable to update gig',
-                data: e
+                data : e
             });
         });
     }
@@ -226,7 +225,7 @@ class Usercontroller {
                 res.status(200).json({
                     error: false,
                     message: 'male measurement created successfully',
-                    male_measurement: {
+                    data : {
                         id: data._id,
                         neck_circumference: data.neck_circumference,
                         shoulder_breadth: data.shoulder_breadth,
@@ -265,7 +264,7 @@ class Usercontroller {
                 res.status(200).json({
                     error: false,
                     message: 'male measurement updated successfully',
-                    male_measurement: {
+                    data : {
                         neck_circumference: data.neck_circumference,
                         shoulder_breadth: data.shoulder_breadth,
                         chest_circumference: data.chest_circumference,
@@ -312,7 +311,7 @@ class Usercontroller {
                 res.status(200).json({
                     error: false,
                     message: 'female measurement created successfully',
-                    female_measurement: {
+                    data : {
                         id:data._id,
                         shoulder_shoulder: data.shoulder_shoulder,
                         bust_line: data.bust_line,
@@ -352,11 +351,10 @@ class Usercontroller {
             'full_length', 'arm_hole', 'arm_round', 'sleeve_length', 'half_sleeve']);
         FemaleModel.findByIdAndUpdate(id, { $set: body }, { new: true })
             .then((data) => {
-
                 res.status(200).json({
                     error: false,
                     message: 'female measurement update successfully',
-                    female_measurement: {
+                    data : {
                         shoulder_shoulder: data.shoulder_shoulder,
                         bust_line: data.bust_line,
                         bust_round: data.bust_round,
@@ -393,7 +391,7 @@ class Usercontroller {
                 res.status(200).json({
                     error: false,
                     message: 'here are the customers ',
-                    customers: data
+                    data
                 })
             }).catch((e) => {
                 res.status(200).json({
@@ -425,7 +423,7 @@ class Usercontroller {
                 error: false,
                 code: 201,
                 message: 'gig marked as done',
-                gig: {
+                data : {
                     id: data._id,
                     title: data.title
                 }
