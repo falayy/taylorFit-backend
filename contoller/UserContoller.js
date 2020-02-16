@@ -2,6 +2,7 @@ const { UserModel, generateToken, findByToken } = require('../models/User');
 const Customer = require('../models/customer');
 const MaleModel = require('../models/MaleMeasure');
 const FemaleModel = require('../models/FemaleMeasure');
+const token = "wetryhdffdf3cdjfnfjgifn"
 const { ObjectID } = require('mongodb');
 const _ = require('lodash');
 const Gig = require('../models/gig')
@@ -40,32 +41,30 @@ class Usercontroller {
                         name: req.body.name,
                         phone_number: req.body.phone_number,
                         password: hashed,
-                        business_name: req.body.business_name
-                    }).then(async (user) => {
-                        const token = generateToken(user._id);
-                        const user_object = await UserModel.findOne({ _id: user._id });
-                        user_object.token = token;
-                        user_object.save().then((data) => {
-                            res.status(200).json({
-                                error: false,
-                                message: 'user registered',
-                                data : {
-                                    id: data._id,
-                                    token: data.token,
-                                    name: data.name
-                                }
-                            })
-                        }).catch((e) => {
-                            res.status(401).json({
-                                error: true,
-                                message: 'unable to register user',
-                                data: e
-                            })
+                        business_name: req.body.business_name,
+                        token
+                    }).then((data) => {
+                        res.status(200).json({
+                            error: false,
+                            message: 'user registered',
+                            data: {
+                                id: data._id,
+                                token: data.token,
+                                name: data.name
+                            }
+                        })
+                    }).catch((e) => {
+                        res.status(401).json({
+                            error: true,
+                            message: 'unable to register user',
+                            data: e
                         })
                     })
                 }
             })
     }
+
+
 
     signIn(req, res) {
         UserModel.findOne({ phone_number: req.body.phone_number })
@@ -78,24 +77,15 @@ class Usercontroller {
                 } else {
                     var result = bcrypt.compareSync(req.body.password, user.password);
                     if (result) {
-                        const token = generateToken(user._id);
-                        user.token = token;
-                        user.save().then((data) => {
                             res.status(200).json({
                                 error: false,
                                 message: 'user signed in',
-                                data : {
-                                    id: data._id,
-                                    token: data.token,
-                                    name: data.name
+                                data: {
+                                    id: user._id,
+                                    token: user.token,
+                                    name: user.name
                                 }
                             })
-                        }).catch((e) => {
-                            res.status(400).json({
-                                error: false,
-                                message: 'unable to sign user in',
-                            })
-                        })
                     } else {
                         res.status(400).json({
                             error: false,
@@ -123,7 +113,7 @@ class Usercontroller {
             res.status(200).json({
                 error: false,
                 message: 'customer created successfully',
-                data : {
+                data: {
                     id: data._id,
                     phone_number: data.phone_number,
                     name: data.name
@@ -141,7 +131,7 @@ class Usercontroller {
      */
 
     createGig(req, res) {
-        const dateStamp = new Date().getTime();             
+        const dateStamp = new Date().getTime();
         const date = dateStamp;
         Gig.create({
             user_id: req.body.user_id,
@@ -154,7 +144,7 @@ class Usercontroller {
             res.status(200).json({
                 error: false,
                 message: 'gig created successfully',
-                data : {
+                data: {
                     id: data._id,
                     title: data.title
                 }
@@ -185,7 +175,7 @@ class Usercontroller {
             res.status(200).json({
                 error: false,
                 message: 'gig updated successfully',
-                data : {
+                data: {
                     id: data._id,
                     title: data.title
                 }
@@ -194,7 +184,7 @@ class Usercontroller {
             res.status(401).json({
                 error: true,
                 message: 'unable to update gig',
-                data : e
+                data: e
             });
         });
     }
@@ -225,7 +215,7 @@ class Usercontroller {
                 res.status(200).json({
                     error: false,
                     message: 'male measurement created successfully',
-                    data : {
+                    data: {
                         id: data._id,
                         neck_circumference: data.neck_circumference,
                         shoulder_breadth: data.shoulder_breadth,
@@ -264,7 +254,7 @@ class Usercontroller {
                 res.status(200).json({
                     error: false,
                     message: 'male measurement updated successfully',
-                    data : {
+                    data: {
                         neck_circumference: data.neck_circumference,
                         shoulder_breadth: data.shoulder_breadth,
                         chest_circumference: data.chest_circumference,
@@ -286,7 +276,7 @@ class Usercontroller {
             })
     }
 
-   async createFemaleMeasurement(req, res) {
+    async createFemaleMeasurement(req, res) {
         const customer_id = req.body.customer_id;
         const customer_object = await Customer.findOne({ _id: customer_id });
         if (customer_object.gender == "female") {
@@ -311,8 +301,8 @@ class Usercontroller {
                 res.status(200).json({
                     error: false,
                     message: 'female measurement created successfully',
-                    data : {
-                        id:data._id,
+                    data: {
+                        id: data._id,
                         shoulder_shoulder: data.shoulder_shoulder,
                         bust_line: data.bust_line,
                         bust_round: data.bust_round,
@@ -354,7 +344,7 @@ class Usercontroller {
                 res.status(200).json({
                     error: false,
                     message: 'female measurement update successfully',
-                    data : {
+                    data: {
                         shoulder_shoulder: data.shoulder_shoulder,
                         bust_line: data.bust_line,
                         bust_round: data.bust_round,
@@ -404,7 +394,7 @@ class Usercontroller {
      * @measurement_comes_with_gigs_for_a_particular_customer
      */
     getGigs(req, res) {
-        Gig.find({ customer: _id})
+        Gig.find({ customer: _id })
             .then((data) => {
 
             }).catch((e) => {
@@ -423,7 +413,7 @@ class Usercontroller {
                 error: false,
                 code: 201,
                 message: 'gig marked as done',
-                data : {
+                data: {
                     id: data._id,
                     title: data.title
                 }
