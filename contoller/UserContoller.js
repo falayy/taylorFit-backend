@@ -2,7 +2,6 @@ const { UserModel, generateToken, findByToken } = require('../models/User');
 const Customer = require('../models/customer');
 const MaleModel = require('../models/MaleMeasure');
 const FemaleModel = require('../models/FemaleMeasure');
-const token = "wetryhdffdf3cdjfnfjgifn"
 const { ObjectID } = require('mongodb');
 const _ = require('lodash');
 const Gig = require('../models/gig')
@@ -42,23 +41,28 @@ class Usercontroller {
                         phone_number: req.body.phone_number,
                         password: hashed,
                         business_name: req.body.business_name,
-                        token
-                    }).then((data) => {
-                        res.status(200).json({
-                            error: false,
-                            message: 'user registered',
-                            data: {
-                                id: data._id,
-                                token: data.token,
-                                name: data.name
-                            }
-                        })
-                    }).catch((e) => {
-                        res.status(401).json({
-                            error: true,
-                            message: 'unable to register user',
-                            data: e
-                        })
+                    }).then(async (user) => {
+                        const token = generateToken(user._id);
+                        const user_object = await UserModel.findOne({ _id: user._id });
+                        user_object.token = token;
+                        user_object.save()
+                            .then((data) => {
+                                res.status(200).json({
+                                    error: false,
+                                    message: 'user registered',
+                                    data: {
+                                        id: data._id,
+                                        token: data.token,
+                                        name: data.name
+                                    }
+                                })
+                            }).catch((e) => {
+                                res.status(401).json({
+                                    error: true,
+                                    message: 'unable to register user',
+                                    data: e
+                                })
+                            })
                     })
                 }
             })
@@ -77,6 +81,9 @@ class Usercontroller {
                 } else {
                     var result = bcrypt.compareSync(req.body.password, user.password);
                     if (result) {
+                        const token = generateToken(user._id);
+                        user.token = token;
+                        user.save().then((user) => {
                             res.status(200).json({
                                 error: false,
                                 message: 'user signed in',
@@ -86,6 +93,7 @@ class Usercontroller {
                                     name: user.name
                                 }
                             })
+                        })
                     } else {
                         res.status(400).json({
                             error: false,
