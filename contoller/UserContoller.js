@@ -2,7 +2,6 @@ const { UserModel, generateToken, findByToken } = require('../models/User');
 const Customer = require('../models/customer');
 const MaleModel = require('../models/MaleMeasure');
 const FemaleModel = require('../models/FemaleMeasure');
-const token = "wetryhdffdf3cdjfnfjgifn"
 const { ObjectID } = require('mongodb');
 const _ = require('lodash');
 const Gig = require('../models/gig')
@@ -32,6 +31,7 @@ class Usercontroller {
                 if (data) {
                     res.status(400).json({
                         error: true,
+                        code: 400,
                         message: 'phone number exists'
                     })
                 } else {
@@ -41,54 +41,70 @@ class Usercontroller {
                         name: req.body.name,
                         phone_number: req.body.phone_number,
                         password: hashed,
-                        business_name: req.body.business_name,
-                        token
-                    }).then((data) => {
-                        res.status(200).json({
-                            error: false,
-                            message: 'user registered',
-                            data: {
-                                id: data._id,
-                                token: data.token,
-                                name: data.name
-                            }
-                        })
-                    }).catch((e) => {
-                        res.status(401).json({
-                            error: true,
-                            message: 'unable to register user',
-                            data: e
+                        business_name: req.body.business_name
+                    }).then(async (user) => {
+                        const token = generateToken(user._id);
+                        const user_object = await UserModel.findOne({ _id: user._id });
+                        user_object.token = token;
+                        user_object.save().then((data) => {
+                            res.status(200).json({
+                                error: false,
+                                code: 201,
+                                message: 'user registered',
+                                data: {
+                                    id: data._id,
+                                    token: data.token,
+                                    name: data.name
+                                }
+                            })
+                        }).catch((e) => {
+                            res.status(200).json({
+                                error: true,
+                                message: 'unable to register user',
+                                data: e
+                            })
                         })
                     })
                 }
             })
     }
 
-
-
     signIn(req, res) {
         UserModel.findOne({ phone_number: req.body.phone_number })
             .then((user) => {
                 if (!user) {
-                    res.status(401).json({
+                    res.status(409).json({
                         error: true,
+                        code: 409,
                         message: 'phone number does not exist'
                     })
                 } else {
                     var result = bcrypt.compareSync(req.body.password, user.password);
                     if (result) {
+                        const token = generateToken(user._id);
+                        user.token = token;
+                        user.save().then((data) => {
                             res.status(200).json({
                                 error: false,
+                                code: 201,
                                 message: 'user signed in',
-                                data: {
-                                    id: user._id,
-                                    token: user.token,
-                                    name: user.name
+                                user: {
+                                    id: data._id,
+                                    token: data.token,
+                                    name: data.name
                                 }
                             })
+                        }).catch((e) => {
+                            res.status(400).json({
+                                error: false,
+                                code: 201,
+                                message: 'unable to sign user in',
+                            })
+                        })
                     } else {
                         res.status(400).json({
                             error: false,
+                            code: 400,
                             message: 'incorrect password'
                         })
                     }
@@ -112,8 +128,9 @@ class Usercontroller {
         }).then((data) => {
             res.status(200).json({
                 error: false,
+                code: 201,
                 message: 'customer created successfully',
-                data: {
+                customer: {
                     id: data._id,
                     phone_number: data.phone_number,
                     name: data.name
@@ -122,6 +139,7 @@ class Usercontroller {
         }).catch((e) => {
             res.status(400).json({
                 error: false,
+                code: 400,
                 message: 'unable to create customer'
             })
         })
@@ -131,7 +149,7 @@ class Usercontroller {
      */
 
     createGig(req, res) {
-        const dateStamp = new Date().getTime();
+        const dateStamp = new Date().getTime();             //req.body.delivery_date;
         const date = dateStamp;
         Gig.create({
             user_id: req.body.user_id,
@@ -143,8 +161,9 @@ class Usercontroller {
         }).then((data) => {
             res.status(200).json({
                 error: false,
+                code: 201,
                 message: 'gig created successfully',
-                data: {
+                gig: {
                     id: data._id,
                     title: data.title
                 }
@@ -152,6 +171,7 @@ class Usercontroller {
         }).catch((e) => {
             res.status(401).json({
                 error: true,
+                code: 401,
                 message: 'unable to create gig',
                 data: e
             })
@@ -174,8 +194,9 @@ class Usercontroller {
         gig_object.save().then((data) => {
             res.status(200).json({
                 error: false,
+                code: 201,
                 message: 'gig updated successfully',
-                data: {
+                gig: {
                     id: data._id,
                     title: data.title
                 }
@@ -183,6 +204,7 @@ class Usercontroller {
         }).catch((e) => {
             res.status(401).json({
                 error: true,
+                code: 401,
                 message: 'unable to update gig',
                 data: e
             });
@@ -214,8 +236,9 @@ class Usercontroller {
             }).then((data) => {
                 res.status(200).json({
                     error: false,
+                    code: 201,
                     message: 'male measurement created successfully',
-                    data: {
+                    male_measurement: {
                         id: data._id,
                         neck_circumference: data.neck_circumference,
                         shoulder_breadth: data.shoulder_breadth,
@@ -230,15 +253,17 @@ class Usercontroller {
                     }
                 })
             }).catch((e) => {
-                res.status(401).json({
+                res.status(400).json({
                     error: true,
+                    code: 201,
                     message: 'unable to create measurement',
                     data: e
                 })
             })
         } else {
-            res.status(401).json({
+            res.status(400).json({
                 error: true,
+                code: 201,
                 message: 'you might need to confirm your gender',
             })
         }
@@ -253,8 +278,9 @@ class Usercontroller {
             .then((data) => {
                 res.status(200).json({
                     error: false,
+                    code: 201,
                     message: 'male measurement updated successfully',
-                    data: {
+                    male_measurement: {
                         neck_circumference: data.neck_circumference,
                         shoulder_breadth: data.shoulder_breadth,
                         chest_circumference: data.chest_circumference,
@@ -268,15 +294,16 @@ class Usercontroller {
                     }
                 })
             }).catch((e) => {
-                res.status(401).json({
+                res.status(400).json({
                     error: true,
+                    code: 401,
                     message: 'unable to update measurement',
                     data: e
                 })
             })
     }
 
-    async createFemaleMeasurement(req, res) {
+   async createFemaleMeasurement(req, res) {
         const customer_id = req.body.customer_id;
         const customer_object = await Customer.findOne({ _id: customer_id });
         if (customer_object.gender == "female") {
@@ -300,9 +327,10 @@ class Usercontroller {
             }).then((data) => {
                 res.status(200).json({
                     error: false,
+                    code: 201,
                     message: 'female measurement created successfully',
-                    data: {
-                        id: data._id,
+                    female_measurement: {
+                        id:data._id,
                         shoulder_shoulder: data.shoulder_shoulder,
                         bust_line: data.bust_line,
                         bust_round: data.bust_round,
@@ -319,16 +347,18 @@ class Usercontroller {
                     }
                 })
             }).catch((e) => {
-                res.status(401).json({
+                res.status(200).json({
                     error: true,
+                    code: 401,
                     message: 'unable to update measurement',
                     data: e
                 })
 
             })
         } else {
-            res.status(401).json({
+            res.status(400).json({
                 error: true,
+                code: 201,
                 message: 'you might need to confirm your gender',
             })
         }
@@ -341,10 +371,12 @@ class Usercontroller {
             'full_length', 'arm_hole', 'arm_round', 'sleeve_length', 'half_sleeve']);
         FemaleModel.findByIdAndUpdate(id, { $set: body }, { new: true })
             .then((data) => {
+
                 res.status(200).json({
                     error: false,
+                    code: 201,
                     message: 'female measurement update successfully',
-                    data: {
+                    female_measurement: {
                         shoulder_shoulder: data.shoulder_shoulder,
                         bust_line: data.bust_line,
                         bust_round: data.bust_round,
@@ -364,6 +396,7 @@ class Usercontroller {
             }).catch((e) => {
                 res.status(200).json({
                     error: true,
+                    code: 401,
                     message: 'unable to update measurement',
                     data: e
                 })
@@ -380,12 +413,14 @@ class Usercontroller {
             .then((data) => {
                 res.status(200).json({
                     error: false,
+                    code: 201,
                     message: 'here are the customers ',
-                    data
+                    customers: data
                 })
             }).catch((e) => {
                 res.status(200).json({
                     error: true,
+                    code: 401,
                     message: 'unable to get customers',
                 })
             })
@@ -394,7 +429,7 @@ class Usercontroller {
      * @measurement_comes_with_gigs_for_a_particular_customer
      */
     getGigs(req, res) {
-        Gig.find({ customer: _id })
+        Gig.find({ customer: _id})
             .then((data) => {
 
             }).catch((e) => {
@@ -413,7 +448,7 @@ class Usercontroller {
                 error: false,
                 code: 201,
                 message: 'gig marked as done',
-                data: {
+                gig: {
                     id: data._id,
                     title: data.title
                 }
@@ -421,6 +456,7 @@ class Usercontroller {
         }).catch((e) => {
             res.status(401).json({
                 error: true,
+                code: 401,
                 message: 'cannot be marked as done',
                 data: e
             });
