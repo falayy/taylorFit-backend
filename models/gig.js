@@ -15,7 +15,7 @@ const gigSchema = new Schema({
         required: true,
     },
     delivery_date: {
-        type: Number,
+        type: String,
         required: true,
     },
     style_name : {
@@ -26,7 +26,7 @@ const gigSchema = new Schema({
         type: String,
     },
     price : {
-        type: String,
+        type: Number,
     },
     is_done :{
         type : Boolean,
