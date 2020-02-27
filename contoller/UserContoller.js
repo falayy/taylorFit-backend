@@ -139,13 +139,14 @@ class Usercontroller {
      */
 
     createGig(req, res) {
-        const dateStamp = new Date().getTime();
-        const date = dateStamp;
+        const dateStamp = req.body.date;
         Gig.create({
             user_id: req.body.user_id,
             customer_id: req.body.customer_id,
             title: req.body.title,
-            delivery_date: date,
+            price: req.body.price,
+            delivery_date: req.body.date,
+            style_name : req.body.style_name,
             style: req.body.style,
             notes: req.body.notes
         }).then((data) => {

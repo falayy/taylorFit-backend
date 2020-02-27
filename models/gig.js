@@ -18,12 +18,19 @@ const gigSchema = new Schema({
         type: Number,
         required: true,
     },
+    style_name : {
+        type: String,
+    },
     style: [String],
     notes : {
         type: String,
     },
+    price : {
+        type: String,
+    },
     is_done :{
-        type : Boolean
+        type : Boolean,
+        default : false
     }
 })
 
