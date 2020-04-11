@@ -138,14 +138,16 @@ class Usercontroller {
      * @function_to_create_gig
      */
 
-    createGig(req, res) {
+    async createGig(req, res) {
+        const customer = await Customer.findById({ _id: req.body.customer_id });
+        const customerGender = customer.gender;
         Gig.create({
             user_id: req.body.user_id,
             customer_id: req.body.customer_id,
             title: req.body.title,
             price: req.body.price,
             delivery_date: req.body.date,
-            style_name : req.body.style_name,
+            style_name: req.body.style_name,
             style: req.body.style,
             notes: req.body.notes
         }).then((data) => {
@@ -154,6 +156,7 @@ class Usercontroller {
                 message: 'gig created successfully',
                 data: {
                     id: data._id,
+                    gender: customerGender,
                     title: data.title
                 }
             })
@@ -383,35 +386,113 @@ class Usercontroller {
      *  then get other details with the id}
      */
 
-    getCustomers(req, res) {
-        Customer.find({ user_id: req.body.user_id })
-            .then((data) => {
+    getCustomerGig(req, res) {
+        Customer.find().populate('gigs')
+            .exec((error, _data) => {
+                if (error) console.log(error)
+                const data = _data.map(element => {
+                    const query = element.gigs;
+                    const customer_name = element.name;
+                    const customer_number = element.phone_number;
+                    const customer_gender = element.gender;
+                    const gig_title = query.title;
+                    const delivery_date = query.delivery_date;
+                    const style_name = query.style_name;
+                    const style = query.style;
+                    const price = query.price;
+                    const notes = query.notes;
+                    const is_done = query.is_done;
+                    const customer_id = element._id;
+                    const gig_id = query._id;
+                    return {
+                        customer_id,
+                        customer_name,
+                        customer_number,
+                        customer_gender,
+                        gig_title,
+                        delivery_date,
+                        style_name,
+                        style,
+                        price,
+                        notes,
+                        is_done,
+                        gig_id
+                    }
+                })
                 res.status(200).json({
                     error: false,
-                    message: 'here are the customers ',
+                    message: 'customer info returned',
                     data
                 })
-            }).catch((e) => {
-                res.status(200).json({
-                    error: true,
-                    message: 'unable to get customers',
-                })
             })
     }
+
     /**
-     * @measurement_comes_with_gigs_for_a_particular_customer
+     *  @get_measurement
      */
-    getGigs(req, res) {
-        Gig.find({ customer: _id })
-            .then((data) => {
 
-            }).catch((e) => {
-
-            })
+    async getCustomerMeasurement(req, res) {
+        const customer = await Customer.findById({ _id: req.body.customer_id });
+        if (customer.gender == "male") {
+            MaleModel.find({ customer_id: req.body.customer_id, gig_id: req.body.gig_id })
+                .then((data) => {
+                    res.status(200).json({
+                        error: false,
+                        message: 'measurement info returned',
+                        data
+                    }).catch((e) => {
+                        res.status(400).json({
+                            error: true,
+                            message: 'unable to get measurement',
+                        })
+                    })
+                })
+        } else {
+            FemaleModel.find({ customer_id: req.body.customer_id, gig_id: req.body.gig_id })
+                .then((data) => {
+                    res.status(200).json({
+                        error: false,
+                        message: 'measurement info returned',
+                        data
+                    }).catch((e) => {
+                        res.status(400).json({
+                            error: true,
+                            message: 'unable to get measurement',
+                        })
+                    })
+                })
+        }
     }
+
+    /**
+     * @get_user_details for dashboard shenanigans
+     */
+
+    getUserInfo(req, res) {
+        const token = req.header('x-auth');
+        findByToken(token).then((user) => {
+            res.status(200).json({
+                error: false,
+                message: 'user info returned',
+                data: {
+                    business_name: user.business_name,
+                    phone_number: user.phone_number,
+                    username: user.name
+                }
+            })
+        }).catch((e) => {
+            res.status(400).json({
+                error: true,
+                message: 'unable to get user info',
+            })
+        })
+    }
+
+  
     /**
      * @add_to_done
      */
+
     async addToDone(req, res) {
         const id = req.body.gig_id;
         const gig_object = await Gig.findOne({ customer_id: req.body.customer_id, _id: id });
@@ -434,8 +515,6 @@ class Usercontroller {
             });
         });
     }
-
-
 
 }
 
