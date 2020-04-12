@@ -10,7 +10,7 @@ const femaleMeasurementSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Customer'
     },
-    gigs_id: {
+    gig_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'gigModel'
     },

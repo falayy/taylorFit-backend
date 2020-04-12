@@ -60,6 +60,18 @@ app.post('/gig/done', auth, (req, res) =>{
     UserController.addToDone(req, res);
 })
 
+app.get('/user/info', auth, (req, res) =>{
+    UserController.getUserInfo(req, res);
+})
+
+app.get('/measurement', auth, (req, res) =>{
+    UserController.getCustomerMeasurement(req, res);
+})
+
+app.get('/customer/gig', auth, (req, res) =>{
+    UserController.getCustomerGig(req, res);
+})
+
 app.listen(PORT, () =>{
     console.log("server running on", PORT);   
 })

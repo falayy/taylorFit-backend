@@ -139,7 +139,8 @@ class Usercontroller {
      */
 
     async createGig(req, res) {
-        const customer = await Customer.findById({ _id: req.body.customer_id });
+        const customer_id = req.body.customer_id;
+        const customer = await Customer.findById({ _id: customer_id});
         const customerGender = customer.gender;
         Gig.create({
             user_id: req.body.user_id,
@@ -150,7 +151,7 @@ class Usercontroller {
             style_name: req.body.style_name,
             style: req.body.style,
             notes: req.body.notes
-        }).then((data) => {
+        }).then( async (data) => {
             res.status(200).json({
                 error: false,
                 message: 'gig created successfully',
@@ -159,6 +160,11 @@ class Usercontroller {
                     gender: customerGender,
                     title: data.title
                 }
+            })
+            const customer = await Customer.findById({ _id: customer_id});
+            customer.gigs = data._id;
+            customer.save().then((data) =>{
+                console.log("up", data)
             })
         }).catch((e) => {
             res.status(401).json({
@@ -332,7 +338,7 @@ class Usercontroller {
             }).catch((e) => {
                 res.status(401).json({
                     error: true,
-                    message: 'unable to update measurement',
+                    message: 'unable to create measurement',
                     data: e
                 })
 
@@ -387,7 +393,7 @@ class Usercontroller {
      */
 
     getCustomerGig(req, res) {
-        Customer.find().populate('gigs')
+        Customer.find({user_id : req.header("user_id")}).populate('gigs')
             .exec((error, _data) => {
                 if (error) console.log(error)
                 const data = _data.map(element => {
@@ -432,9 +438,11 @@ class Usercontroller {
      */
 
     async getCustomerMeasurement(req, res) {
-        const customer = await Customer.findById({ _id: req.body.customer_id });
+        const customer_id = req.header('customer_id')
+        const gig_id = req.header('gig_id')
+        const customer = await Customer.findById({ _id: customer_id });
         if (customer.gender == "male") {
-            MaleModel.find({ customer_id: req.body.customer_id, gig_id: req.body.gig_id })
+            MaleModel.findOne({ customer_id, gig_id })
                 .then((data) => {
                     res.status(200).json({
                         error: false,
@@ -448,7 +456,7 @@ class Usercontroller {
                     })
                 })
         } else {
-            FemaleModel.find({ customer_id: req.body.customer_id, gig_id: req.body.gig_id })
+            FemaleModel.findOne({ customer_id,  gig_id })
                 .then((data) => {
                     res.status(200).json({
                         error: false,
@@ -488,7 +496,7 @@ class Usercontroller {
         })
     }
 
-  
+
     /**
      * @add_to_done
      */
@@ -515,7 +523,6 @@ class Usercontroller {
             });
         });
     }
-
 }
 
 module.exports = new Usercontroller();

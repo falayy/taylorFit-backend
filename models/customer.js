@@ -14,10 +14,10 @@ const customerSchema = new Schema({
         type: String,
         required: true
     },
-    gigs : [{
+    gigs : {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'gigModel'
-    }],
+    },
     user_id : {
         ref : 'UserModel',
         type: mongoose.Schema.Types.ObjectId,
