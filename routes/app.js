@@ -28,7 +28,7 @@ app.post('/gigs/register', auth, (req, res) =>{
     UserController.createGig(req, res);
 });
 
-app.post('/gigs/update', auth, (req, res) =>{
+app.patch('/gigs/update', auth, (req, res) =>{
     UserController.updateGig(req, res);
 });
 
