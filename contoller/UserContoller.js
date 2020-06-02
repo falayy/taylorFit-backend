@@ -219,16 +219,6 @@ class Usercontroller {
                 customer_id,
                 gig_id: req.body.gig_id,
                 measurement : req.body.measurement
-                // neck_circumference: req.body.neck_circumference,
-                // shoulder_breadth: req.body.shoulder_breadth,
-                // chest_circumference: req.body.chest_circumference,
-                // waist_circumference: req.body.waist_circumference,
-                // hips_circumference: req.body.hips_circumference,
-                // thigh: req.body.thigh,
-                // calf: req.body.calf,
-                // wrist_circumference: req.body.wrist_circumference,
-                // arm_length: req.body.arm_length,
-                // full_length: req.body.full_length
             }).then((data) => {
                 res.status(200).json({
                     error: false,
@@ -236,16 +226,6 @@ class Usercontroller {
                     data: {
                         id: data._id,
                         measurement : data.measurement
-                        // neck_circumference: data.neck_circumference,
-                        // shoulder_breadth: data.shoulder_breadth,
-                        // chest_circumference: data.chest_circumference,
-                        // waist_circumference: data.waist_circumference,
-                        // hips_circumference: data.hips_circumference,
-                        // thigh: data.thigh,
-                        // calf: data.calf,
-                        // wrist_circumference: data.wrist_circumference,
-                        // arm_length: data.arm_length,
-                        // full_length: data.full_length
                     }
                 })
             }).catch((e) => {
@@ -277,7 +257,7 @@ class Usercontroller {
                         neck_circumference: data.neck_circumference,
                         shoulder_breadth: data.shoulder_breadth,
                         chest_circumference: data.chest_circumference,
-                        waist_circumference: data.waist_circumference,
+                        waist_cirßcumference: data.waist_circumference,
                         hips_circumference: data.hips_circumference,
                         thigh: data.thigh,
                         calf: data.calf,
@@ -304,19 +284,6 @@ class Usercontroller {
                 customer_id: req.body.customer_id,
                 gig_id: req.body.gig_id,
                 measurement : req.body.measurement
-                // shoulder_shoulder: req.body.shoulder_shoulder,
-                // bust_line: req.body.bust_line,
-                // bust_round: req.body.bust_round,
-                // under_bust: req.body.under_bust,
-                // natural_waist_line: req.body.natural_waist_line,
-                // natural_waist_round: req.body.natural_waist_round,
-                // hip_line: req.body.hip_line,
-                // hip_round: req.body.hip_round,
-                // full_length: req.body.full_length,
-                // arm_hole: req.body.arm_hole,
-                // arm_round: req.body.arm_round,
-                // sleeve_length: req.body.sleeve_length,
-                // half_sleeve: req.body.half_sleeve
             }).then((data) => {
                 res.status(200).json({
                     error: false,
@@ -324,19 +291,6 @@ class Usercontroller {
                     data: {
                         id: data._id,
                         measurement : data.measurement
-                        // shoulder_shoulder: data.shoulder_shoulder,
-                        // bust_line: data.bust_line,
-                        // bust_round: data.bust_round,
-                        // under_bust: data.under_bust,
-                        // natural_waist_line: data.natural_waist_line,
-                        // natural_waist_round: data.natural_waist_round,
-                        // hip_line: data.hip_line,
-                        // hip_round: data.hip_round,
-                        // full_length: data.full_length,
-                        // arm_hole: data.arm_hole,
-                        // arm_round: data.arm_round,
-                        // sleeve_length: data.sleeve_length,
-                        // half_sleeve: data.half_sleeve
                     }
                 })
             }).catch((e) => {
