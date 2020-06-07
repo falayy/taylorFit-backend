@@ -287,7 +287,7 @@ class Usercontroller {
             }).then((data) => {
                 res.status(200).json({
                     error: false,
-                    message: 'female measurement created successfully',
+                    message: 'measurement created successfully',
                     data: {
                         id: data._id,
                         measurement : data.measurement
