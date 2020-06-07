@@ -278,7 +278,7 @@ class Usercontroller {
     async createFemaleMeasurement(req, res) {
         const customer_id = req.body.customer_id;
         const customer_object = await Customer.findOne({ _id: customer_id });
-        if (customer_object.gender == "female") {
+       
             FemaleModel.create({
                 user_id: req.body.user_id,
                 customer_id: req.body.customer_id,
@@ -301,12 +301,6 @@ class Usercontroller {
                 })
 
             })
-        } else {
-            res.status(401).json({
-                error: true,
-                message: 'you might need to confirm your gender',
-            })
-        }
     }
 
     updateFemaleMeasurement(req, res) {
