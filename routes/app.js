@@ -28,10 +28,6 @@ app.post('/gigs/register', auth, (req, res) =>{
     UserController.createGig(req, res);
 });
 
-app.patch('/gigs/update', auth, (req, res) =>{
-    UserController.updateGig(req, res);
-});
-
 app.get('/customers', auth, (req, res) =>{
     UserController.getCustomers(req, res);
 });
@@ -40,20 +36,8 @@ app.get('/gigs', auth, (req, res) =>{
     UserController.getGigs(req, res);
 });
 
-app.post('/customer/measurement/male', auth ,(req, res) =>{
-    UserController.createMaleMeasurement(req, res);
-});
-
-app.post('/customer/measurement/female', auth ,(req, res) =>{
-    UserController.createFemaleMeasurement(req, res);
-});
-
-app.post('/measurement/male/update', auth ,(req, res) =>{
-    UserController.updateMaleMeasurement(req, res);
-});
-
-app.post('/measurement/female/update', auth ,(req, res) =>{
-    UserController.updateFemaleMeasurement(req, res);
+app.post('/customer/measurement', auth ,(req, res) =>{
+    UserController.createMeasurement(req, res);
 });
 
 app.post('/gig/done', auth, (req, res) =>{
@@ -68,9 +52,14 @@ app.get('/measurement', auth, (req, res) =>{
     UserController.getCustomerMeasurement(req, res);
 })
 
-app.get('/customer/gig', auth, (req, res) =>{
-    UserController.getCustomerGig(req, res);
+app.get('/customer/gig/pending', auth, (req, res) =>{
+    UserController.getCustomerPendingGig(req, res);
 })
+
+app.get('/customer/gig/finish', auth, (req, res) =>{
+    UserController.getCustomerCompletedGig(req, res);
+})
+
 
 app.listen(PORT, () =>{
     console.log("server running on", PORT);   

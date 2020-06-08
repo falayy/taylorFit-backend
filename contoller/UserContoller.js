@@ -1,7 +1,6 @@
 const { UserModel, generateToken, findByToken } = require('../models/User');
 const Customer = require('../models/customer');
-const MaleModel = require('../models/MaleMeasure');
-const FemaleModel = require('../models/FemaleMeasure');
+const MeasurementModel = require('../models/MeasurementModel');
 const { ObjectID } = require('mongodb');
 const _ = require('lodash');
 const Gig = require('../models/gig')
@@ -176,110 +175,11 @@ class Usercontroller {
     }
 
     /**
-     * @function_to_update
-     */
-    async updateGig(req, res) {
-        const id = req.body.gig_id;
-        const style = req.body.style;
-        const gig_object = await Gig.findOne({ customer_id: req.body.customer_id, _id: id });
-        gig_object.notes = req.body.notes;
-        const temp_array = gig_object.style
-        var i;
-        for (i = 0; i < style.length; i++) {
-            temp_array.push(style[i])
-        }
-        gig_object.save().then((data) => {
-            res.status(200).json({
-                error: false,
-                message: 'gig updated successfully',
-                data: {
-                    id: data._id,
-                    title: data.title
-                }
-            })
-        }).catch((e) => {
-            res.status(401).json({
-                error: true,
-                message: 'unable to update gig',
-                data: e
-            });
-        });
-    }
-
-    /**
      * @measurement_functions
      */
 
-    async createMaleMeasurement(req, res) {
-        const customer_id = req.body.customer_id;
-        const customer_object = await Customer.findOne({ _id: customer_id });
-        if (customer_object.gender == "male") {
-            MaleModel.create({
-                user_id: req.body.user_id,
-                customer_id,
-                gig_id: req.body.gig_id,
-                measurement : req.body.measurement
-            }).then((data) => {
-                res.status(200).json({
-                    error: false,
-                    message: 'male measurement created successfully',
-                    data: {
-                        id: data._id,
-                        measurement : data.measurement
-                    }
-                })
-            }).catch((e) => {
-                res.status(401).json({
-                    error: true,
-                    message: 'unable to create measurement',
-                    data: e
-                })
-            })
-        } else {
-            res.status(401).json({
-                error: true,
-                message: 'you might need to confirm your gender',
-            })
-        }
-    }
-
-    updateMaleMeasurement(req, res) {
-        const id = req.body.id;
-        const body = _.pick(req.body, ['neck_circumference', 'shoulder_breadth',
-            'chest_circumference', 'waist_circumference', 'hips_circumference',
-            'thigh', 'calf', 'wrist_circumference', 'arm_length', 'full_length']);
-        MaleModel.findByIdAndUpdate(id, { $set: body }, { new: true })
-            .then((data) => {
-                res.status(200).json({
-                    error: false,
-                    message: 'male measurement updated successfully',
-                    data: {
-                        neck_circumference: data.neck_circumference,
-                        shoulder_breadth: data.shoulder_breadth,
-                        chest_circumference: data.chest_circumference,
-                        waist_cirßcumference: data.waist_circumference,
-                        hips_circumference: data.hips_circumference,
-                        thigh: data.thigh,
-                        calf: data.calf,
-                        wrist_circumference: data.wrist_circumference,
-                        arm_length: data.arm_length,
-                        full_length: data.full_length
-                    }
-                })
-            }).catch((e) => {
-                res.status(401).json({
-                    error: true,
-                    message: 'unable to update measurement',
-                    data: e
-                })
-            })
-    }
-
-    async createFemaleMeasurement(req, res) {
-        const customer_id = req.body.customer_id;
-        const customer_object = await Customer.findOne({ _id: customer_id });
-       
-            FemaleModel.create({
+    async createMeasurement(req, res) {
+            MeasurementModel.create({
                 user_id: req.body.user_id,
                 customer_id: req.body.customer_id,
                 gig_id: req.body.gig_id,
@@ -303,48 +203,14 @@ class Usercontroller {
             })
     }
 
-    updateFemaleMeasurement(req, res) {
-        const id = req.body.id;
-        const body = _.pick(req.body, ['shoulder_shoulder', 'bust_line', 'bust_round',
-            'under_bust', 'natural_waist_line', 'natural_waist_round', 'hip_line', 'hip_round',
-            'full_length', 'arm_hole', 'arm_round', 'sleeve_length', 'half_sleeve']);
-        FemaleModel.findByIdAndUpdate(id, { $set: body }, { new: true })
-            .then((data) => {
-                res.status(200).json({
-                    error: false,
-                    message: 'female measurement update successfully',
-                    data: {
-                        shoulder_shoulder: data.shoulder_shoulder,
-                        bust_line: data.bust_line,
-                        bust_round: data.bust_round,
-                        under_bust: data.under_bust,
-                        natural_waist_line: data.natural_waist_line,
-                        natural_waist_round: data.natural_waist_round,
-                        hip_line: data.hip_line,
-                        hip_round: data.hip_round,
-                        full_length: data.full_length,
-                        arm_hole: data.arm_hole,
-                        arm_round: data.arm_round,
-                        sleeve_length: data.sleeve_length,
-                        half_sleeve: data.half_sleeve
-                    }
-                })
-
-            }).catch((e) => {
-                res.status(200).json({
-                    error: true,
-                    message: 'unable to update measurement',
-                    data: e
-                })
-            })
-    }
+    
 
     /**
      * @get_customers {get customers with id and subtle detail,
      *  then get other details with the id}
      */
 
-    getCustomerGig(req, res) {
+    getCustomerPendingGig(req, res) {
         Customer.find({user_id : req.header("user_id")}).populate('gigs')
             .exec((error, _data) => {
                 if (error) console.log(error)
@@ -362,29 +228,73 @@ class Usercontroller {
                     const is_done = query.is_done;
                     const customer_id = element._id;
                     const gig_id = query._id;
-                    return {
-                        customer_id,
-                        customer_name,
-                        customer_number,
-                        customer_gender,
-                        gig_title,
-                        delivery_date,
-                        style_name,
-                        style,
-                        price,
-                        notes,
-                        is_done,
-                        gig_id
+                    if(!is_done) {
+                        return {
+                            customer_id,
+                            customer_name,
+                            customer_number,
+                            customer_gender,
+                            gig_title,
+                            delivery_date,
+                            style_name,
+                            style,
+                            price,
+                            notes,
+                            is_done,
+                            gig_id
+                        }
                     }
                 })
                 res.status(200).json({
                     error: false,
-                    message: 'customer info returned',
+                    message: 'pending customer info returned',
                     data
                 })
             })
     }
 
+    getCustomerCompletedGig(req, res) {
+        Customer.find({user_id : req.header("user_id")}).populate('gigs')
+            .exec((error, _data) => {
+                if (error) console.log(error)
+                const data = _data.map(element => {
+                    const query = element.gigs;
+                    const customer_name = element.name;
+                    const customer_number = element.phone_number;
+                    const customer_gender = element.gender;
+                    const gig_title = query.title;
+                    const delivery_date = query.delivery_date;
+                    const style_name = query.style_name;
+                    const style = query.style;
+                    const price = query.price;
+                    const notes = query.notes;
+                    const is_done = query.is_done;
+                    const customer_id = element._id;
+                    const gig_id = query._id;
+                    if(is_done){
+                        return {
+                            customer_id,
+                            customer_name,
+                            customer_number,
+                            customer_gender,
+                            gig_title,
+                            delivery_date,
+                            style_name,
+                            style,
+                            price,
+                            notes,
+                            is_done,
+                            gig_id
+                        }
+                    }
+                })
+                res.status(200).json({
+                    error: false,
+                    message: 'completed customer info returned',
+                    data
+                })
+            })
+    }
     /**
      *  @get_measurement
      */
@@ -392,23 +302,7 @@ class Usercontroller {
     async getCustomerMeasurement(req, res) {
         const customer_id = req.header('customer_id')
         const gig_id = req.header('gig_id')
-        const customer = await Customer.findById({ _id: customer_id });
-        if (customer.gender == "male") {
-            MaleModel.findOne({ customer_id, gig_id })
-                .then((data) => {
-                    res.status(200).json({
-                        error: false,
-                        message: 'measurement info returned',
-                        data
-                    }).catch((e) => {
-                        res.status(400).json({
-                            error: true,
-                            message: 'unable to get measurement',
-                        })
-                    })
-                })
-        } else {
-            FemaleModel.findOne({ customer_id,  gig_id })
+            MeasurementModel.findOne({ customer_id,  gig_id })
                 .then((data) => {
                     res.status(200).json({
                         error: false,
@@ -422,7 +316,7 @@ class Usercontroller {
                     })
                 })
         }
-    }
+    
 
     /**
      * @get_user_details for dashboard shenanigans
@@ -447,7 +341,6 @@ class Usercontroller {
             })
         })
     }
-
 
     /**
      * @add_to_done
@@ -475,6 +368,7 @@ class Usercontroller {
             });
         });
     }
+
 }
 
 module.exports = new Usercontroller();

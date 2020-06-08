@@ -1,7 +1,7 @@
 const mongoose = require("../database/mongoose");
 const { Schema } = mongoose
 
-const maleMeasurementSchema = new Schema({
+const measurementSchema = new Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserModel'
@@ -20,5 +20,7 @@ const maleMeasurementSchema = new Schema({
     }
 });
 
-const MaleModel = mongoose.model('MaleModel', maleMeasurementSchema);
-module.exports = MaleModel;
+
+
+const MeasurementModel = mongoose.model('FemaleModel', measurementSchema);
+module.exports = MeasurementModel;
