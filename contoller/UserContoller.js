@@ -243,6 +243,8 @@ class Usercontroller {
                             is_done,
                             gig_id
                         }
+                    } else {
+                        return null;
                     }
                 })
                 res.status(200).json({
@@ -286,6 +288,8 @@ class Usercontroller {
                             is_done,
                             gig_id
                         }
+                    } else {
+                        return null;
                     }
                 })
                 res.status(200).json({
