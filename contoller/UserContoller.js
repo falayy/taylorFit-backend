@@ -139,7 +139,7 @@ class Usercontroller {
 
     async createGig(req, res) {
         const customer_id = req.body.customer_id;
-        const customer = await Customer.findById({ _id: customer_id});
+        const customer = await Customer.findById({ _id: customer_id });
         const customerGender = customer.gender;
         Gig.create({
             user_id: req.body.user_id,
@@ -150,7 +150,7 @@ class Usercontroller {
             style_name: req.body.style_name,
             style: req.body.style,
             notes: req.body.notes
-        }).then( async (data) => {
+        }).then(async (data) => {
             res.status(200).json({
                 error: false,
                 message: 'gig created successfully',
@@ -160,9 +160,9 @@ class Usercontroller {
                     title: data.title
                 }
             })
-            const customer = await Customer.findById({ _id: customer_id});
+            const customer = await Customer.findById({ _id: customer_id });
             customer.gigs = data._id;
-            customer.save().then((data) =>{
+            customer.save().then((data) => {
                 console.log("up", data)
             })
         }).catch((e) => {
@@ -179,31 +179,31 @@ class Usercontroller {
      */
 
     async createMeasurement(req, res) {
-            MeasurementModel.create({
-                user_id: req.body.user_id,
-                customer_id: req.body.customer_id,
-                gig_id: req.body.gig_id,
-                measurement : req.body.measurement
-            }).then((data) => {
-                res.status(200).json({
-                    error: false,
-                    message: 'measurement created successfully',
-                    data: {
-                        id: data._id,
-                        measurement : data.measurement
-                    }
-                })
-            }).catch((e) => {
-                res.status(401).json({
-                    error: true,
-                    message: 'unable to create measurement',
-                    data: e
-                })
-
+        MeasurementModel.create({
+            user_id: req.body.user_id,
+            customer_id: req.body.customer_id,
+            gig_id: req.body.gig_id,
+            measurement: req.body.measurement
+        }).then((data) => {
+            res.status(200).json({
+                error: false,
+                message: 'measurement created successfully',
+                data: {
+                    id: data._id,
+                    measurement: data.measurement
+                }
             })
+        }).catch((e) => {
+            res.status(401).json({
+                error: true,
+                message: 'unable to create measurement',
+                data: e
+            })
+
+        })
     }
 
-    
+
 
     /**
      * @get_customers {get customers with id and subtle detail,
@@ -211,7 +211,7 @@ class Usercontroller {
      */
 
     getCustomerPendingGig(req, res) {
-        Customer.find({user_id : req.header("user_id")}).populate('gigs')
+        Customer.find({ user_id: req.header("user_id") }).populate('gigs')
             .exec((error, _data) => {
                 if (error) console.log(error)
                 const data = _data.map(element => {
@@ -228,35 +228,38 @@ class Usercontroller {
                     const is_done = query.is_done;
                     const customer_id = element._id;
                     const gig_id = query._id;
-                    if(!is_done) {
-                        return {
-                            customer_id,
-                            customer_name,
-                            customer_number,
-                            customer_gender,
-                            gig_title,
-                            delivery_date,
-                            style_name,
-                            style,
-                            price,
-                            notes,
-                            is_done,
-                            gig_id
-                        }
-                    } else {
-                        return null;
+                    return {
+                        customer_id,
+                        customer_name,
+                        customer_number,
+                        customer_gender,
+                        gig_title,
+                        delivery_date,
+                        style_name,
+                        style,
+                        price,
+                        notes,
+                        is_done,
+                        gig_id
                     }
                 })
-                res.status(200).json({
-                    error: false,
-                    message: 'pending customer info returned',
-                    data
-                })
+                if (!is_done) {
+                    res.status(200).json({
+                        error: false,
+                        message: 'pending customer info returned',
+                        data
+                    })
+                } else {
+                    res.status(200).json({
+                        error: false,
+                        message: ' nothing',
+                    })
+                }
             })
     }
 
     getCustomerCompletedGig(req, res) {
-        Customer.find({user_id : req.header("user_id")}).populate('gigs')
+        Customer.find({ user_id: req.header("user_id") }).populate('gigs')
             .exec((error, _data) => {
                 if (error) console.log(error)
                 const data = _data.map(element => {
@@ -273,30 +276,33 @@ class Usercontroller {
                     const is_done = query.is_done;
                     const customer_id = element._id;
                     const gig_id = query._id;
-                    if(is_done){
-                        return {
-                            customer_id,
-                            customer_name,
-                            customer_number,
-                            customer_gender,
-                            gig_title,
-                            delivery_date,
-                            style_name,
-                            style,
-                            price,
-                            notes,
-                            is_done,
-                            gig_id
-                        }
-                    } else {
-                        return null;
+                    return {
+                        customer_id,
+                        customer_name,
+                        customer_number,
+                        customer_gender,
+                        gig_title,
+                        delivery_date,
+                        style_name,
+                        style,
+                        price,
+                        notes,
+                        is_done,
+                        gig_id
                     }
                 })
-                res.status(200).json({
-                    error: false,
-                    message: 'completed customer info returned',
-                    data
-                })
+                if (is_done) {
+                    res.status(200).json({
+                        error: false,
+                        message: 'completed customer info returned',
+                        data
+                    })
+                } else {
+                    res.status(200).json({
+                        error: false,
+                        message: ' nothing',
+                    })
+                }
             })
     }
     /**
@@ -306,21 +312,21 @@ class Usercontroller {
     async getCustomerMeasurement(req, res) {
         const customer_id = req.header('customer_id')
         const gig_id = req.header('gig_id')
-            MeasurementModel.findOne({ customer_id,  gig_id })
-                .then((data) => {
-                    res.status(200).json({
-                        error: false,
-                        message: 'measurement info returned',
-                        data
-                    }).catch((e) => {
-                        res.status(400).json({
-                            error: true,
-                            message: 'unable to get measurement',
-                        })
+        MeasurementModel.findOne({ customer_id, gig_id })
+            .then((data) => {
+                res.status(200).json({
+                    error: false,
+                    message: 'measurement info returned',
+                    data
+                }).catch((e) => {
+                    res.status(400).json({
+                        error: true,
+                        message: 'unable to get measurement',
                     })
                 })
-        }
-    
+            })
+    }
+
 
     /**
      * @get_user_details for dashboard shenanigans
