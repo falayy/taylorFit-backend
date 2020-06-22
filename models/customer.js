@@ -16,7 +16,8 @@ const customerSchema = new Schema({
     },
     gigs : {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'gigModel'
+        ref: 'gigModel',
+        default : null
     },
     user_id : {
         ref : 'UserModel',

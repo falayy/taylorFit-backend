@@ -214,7 +214,7 @@ class Usercontroller {
         Customer.find({user_id : req.header("user_id")}).populate('gigs')
             .exec((error, _data) => {
                 if (error) console.log(error)
-                const data = _data.filter(e => !e.gigs.is_done).map(element => {
+                const data = _data.filter(e => e.gigs != null && !e.gigs.is_done).map(element => {
                     const query = element.gigs;
                     const customer_name = element.name;
                     const customer_number = element.phone_number;
@@ -255,7 +255,7 @@ class Usercontroller {
         Customer.find({user_id : req.header("user_id")}).populate('gigs')
             .exec((error, _data) => {
                 if (error) console.log(error)
-                const data = _data.filter(e => e.gigs.is_done).map(element => {
+                const data = _data.filter(e => e.gigs != null && e.gigs.is_done).map(element => {
                     console.log(element.gigs.is_done)
                     if(element.gigs.is_done) {
                         const query = element.gigs;
