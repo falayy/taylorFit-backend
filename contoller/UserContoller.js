@@ -303,16 +303,25 @@ class Usercontroller {
         const gig_id = req.header('gig_id')
             MeasurementModel.findOne({ customer_id,  gig_id })
                 .then((data) => {
-                    res.status(200).json({
-                        error: false,
-                        message: 'measurement info returned',
-                        data
+                    if(data != null) {
+                        res.status(200).json({
+                            error: false,
+                            message: 'measurement info returned',
+                            data                    
                     }).catch((e) => {
                         res.status(400).json({
                             error: true,
-                            message: 'unable to get measurement',
+                            message: 'unable to get measurement'
                         })
                     })
+                } else {
+                    res.status(400).json({
+                        error: true,
+                        message: 'oops! no measurement was recorded for this customer'
+                    })
+                }
+
+
                 })
         }
     
