@@ -27,6 +27,7 @@ const gigSchema = new Schema({
     },
     notes : {
         type: String,
+        default : null
     },
     price : {
         type: Number,
