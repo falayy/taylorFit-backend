@@ -30,7 +30,7 @@ const gigSchema = new Schema({
         default : null
     },
     price : {
-        type: Number,
+        type: String,
     },
     is_done :{
         type : Boolean,
