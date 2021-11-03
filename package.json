@@ -26,6 +26,6 @@
     "moment": "^2.24.0",
     "mongodb": "^3.4.1",
     "mongoose": "^5.9.6",
-    "validator": "^12.1.0"
+    "validator": "^13.7.0"
   }
 }
